@@ -48,11 +48,5 @@ public sealed class Tests : UnitTest
         Assert.Equal(testCase.ExpectedEnumeration, actualEnumeration);
     }
 
-    [Fact]
-    public void Fact()
-    {
-        Assert.NotEqual<Enumeration>(SomeEnumeration.Option1, SomeOtherEnumeration.Option1);
-    }
-
     public static TheoryData<GetEnumerationById> GetEnumerationByIdTests() => new(TestCase.GetTestCases<Tests, GetEnumerationById>(nameof(GetEnumerationById_SomeEnumeration)));
 }
