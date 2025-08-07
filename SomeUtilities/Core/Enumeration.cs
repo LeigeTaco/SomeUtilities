@@ -24,6 +24,8 @@ public abstract class Enumeration
         Register();
     }
 
+    public override sealed bool Equals(object? obj) => ReferenceEquals(obj, this);
+
     public static TEnumeration GetEnumerationById<TEnumeration>(int id)
         where TEnumeration : Enumeration
     {

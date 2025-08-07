@@ -35,8 +35,8 @@ public sealed class Tests : UnitTest
     }
 
     [Theory, MemberData(nameof(GetEnumerationByIdTests))]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1038:There are more theory data type arguments than allowed by the parameters of the test method", Justification = "<Pending>")]
-    public void GetEnumerationById(GetEnumerationById testCase)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1038:There are more theory data type arguments than allowed by the parameters of the test method", Justification = "Type implements IXunitSerializable")]
+    public void GetEnumerationById_SomeEnumeration(GetEnumerationById testCase)
     {
         // ARRANGE
         SomeEnumeration actualEnumeration;
@@ -48,5 +48,11 @@ public sealed class Tests : UnitTest
         Assert.Equal(testCase.ExpectedEnumeration, actualEnumeration);
     }
 
-    public static TheoryData<GetEnumerationById> GetEnumerationByIdTests() => new(TestCase.GetTestCases<Tests, GetEnumerationById>(nameof(GetEnumerationById)));
+    [Fact]
+    public void Fact()
+    {
+        Assert.NotEqual<Enumeration>(SomeEnumeration.Option1, SomeOtherEnumeration.Option1);
+    }
+
+    public static TheoryData<GetEnumerationById> GetEnumerationByIdTests() => new(TestCase.GetTestCases<Tests, GetEnumerationById>(nameof(GetEnumerationById_SomeEnumeration)));
 }

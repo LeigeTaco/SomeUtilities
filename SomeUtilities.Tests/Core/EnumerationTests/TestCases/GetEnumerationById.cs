@@ -5,7 +5,7 @@ namespace SomeUtilities.Tests.Core.EnumerationTests.TestCases;
 
 public abstract class GetEnumerationById : SerializableTestCase<Tests>
 {
-    protected GetEnumerationById(string testCaseName) : base(nameof(Tests.GetEnumerationById), testCaseName) => FunctionsHelper.DoNothing();
+    protected GetEnumerationById(string testCaseName) : base(nameof(Tests.GetEnumerationById_SomeEnumeration), testCaseName) => FunctionsHelper.DoNothing();
 
     public abstract int GivenId { get; }
 

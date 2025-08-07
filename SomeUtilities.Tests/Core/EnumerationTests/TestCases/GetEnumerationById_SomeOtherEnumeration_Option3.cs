@@ -10,5 +10,5 @@ public sealed class GetEnumerationById_SomeOtherEnumeration_Option3 : GetEnumera
 
     public override int GivenId => 3;
 
-    public override Enumeration ExpectedEnumeration => Tests.SomeEnumeration.Option3;
+    public override Enumeration ExpectedEnumeration => Tests.SomeOtherEnumeration.Option3;
 }
