@@ -1,10 +1,9 @@
 ﻿using SomeUtilities.Core;
 using SomeUtilities.Helpers;
-using SomeUtilities.Testing.Abstraction;
 
-namespace SomeUtilities.Tests.NET8.Core.EnumerationTests.TestCases;
+namespace SomeUtilities.Tests.Core.EnumerationTests.TestCases;
 
-public abstract class GetEnumerationById : TestCase<Tests>
+public abstract class GetEnumerationById : SerializableTestCase<Tests>
 {
     protected GetEnumerationById(string testCaseName) : base(nameof(Tests.GetEnumerationById), testCaseName) => FunctionsHelper.DoNothing();
 

@@ -1,26 +1,16 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
-
-#if NET8_0_OR_GREATER
-
-using System.Collections.Frozen;
-
-#endif
 
 namespace SomeUtilities.Core;
 
 public abstract class Enumeration
 {
-#if NET8_0_OR_GREATER
-
     private static readonly Lazy<FrozenDictionary<Type, FrozenDictionary<int, Enumeration>>> _allEnumerationsMap = new(CreateMap);
-    
-#endif
 
-    private static readonly Dictionary<Type, Dictionary<int, Enumeration>> _registeredEnumerations = new();
+    private static readonly Dictionary<Type, Dictionary<int, Enumeration>> _registeredEnumerations = [];
 
     public int Id { get; }
 
@@ -38,16 +28,7 @@ public abstract class Enumeration
         where TEnumeration : Enumeration
     {
         var type = typeof(TEnumeration);
-
-#if NET8_0_OR_GREATER
-
         var map = _allEnumerationsMap.Value;
-
-#else
-
-        var map = _registeredEnumerations;
-
-#endif
 
         return (TEnumeration)map[type][id];
 
@@ -57,16 +38,7 @@ public abstract class Enumeration
         where TEnumeration : Enumeration
     {
         var type = typeof(TEnumeration);
-
-#if NET8_0_OR_GREATER
-
         var map = _allEnumerationsMap.Value;
-
-#else
-
-        var map = _registeredEnumerations;
-
-#endif
 
         if (map.TryGetValue(type, out var dictionary)
             && dictionary.TryGetValue(id, out var @enum))
@@ -85,16 +57,7 @@ public abstract class Enumeration
         where TEnumeration : Enumeration
     {
         var type = typeof(TEnumeration);
-
-#if NET8_0_OR_GREATER
-
         var map = _allEnumerationsMap.Value;
-
-#else
-
-        var map = _registeredEnumerations;
-
-#endif
 
         return map[type].Select(kvp => kvp.Value as TEnumeration)!;
     }
@@ -105,15 +68,13 @@ public abstract class Enumeration
 
         if (!_registeredEnumerations.TryGetValue(type, out var enumsForType))
         {
-            enumsForType = new();
+            enumsForType = [];
 
             _registeredEnumerations[type] = enumsForType;
         }
 
         enumsForType[Id] = this;
     }
-
-#if NET8_0_OR_GREATER
 
     private static FrozenDictionary<Type, FrozenDictionary<int, Enumeration>> CreateMap()
     {
@@ -128,7 +89,4 @@ public abstract class Enumeration
             _registeredEnumerations.Clear();
         }
     }
-    
-#endif
-
 }

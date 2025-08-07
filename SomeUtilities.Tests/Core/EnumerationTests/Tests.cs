@@ -1,11 +1,10 @@
-using System.Linq;
 using SomeUtilities.Core;
 using SomeUtilities.Helpers;
 using SomeUtilities.Testing.Abstraction;
-using SomeUtilities.Tests.NET8.Core.EnumerationTests.TestCases;
+using SomeUtilities.Tests.Core.EnumerationTests.TestCases;
 using Xunit;
 
-namespace SomeUtilities.Tests.NET8.Core.EnumerationTests;
+namespace SomeUtilities.Tests.Core.EnumerationTests;
 
 public sealed class Tests : UnitTest
 {
@@ -49,5 +48,5 @@ public sealed class Tests : UnitTest
         Assert.Equal(testCase.ExpectedEnumeration, actualEnumeration);
     }
 
-    public static TheoryData<GetEnumerationById> GetEnumerationByIdTests() => new(TestCase<Tests>.GetTestCases<GetEnumerationById>(nameof(GetEnumerationById)));
+    public static TheoryData<GetEnumerationById> GetEnumerationByIdTests() => new(TestCase.GetTestCases<Tests, GetEnumerationById>(nameof(GetEnumerationById)));
 }

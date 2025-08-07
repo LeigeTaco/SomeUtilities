@@ -1,9 +1,10 @@
 ﻿using SomeUtilities.Core;
 using SomeUtilities.Helpers;
+using Xunit.Abstractions;
 
-namespace SomeUtilities.Tests.NET8.Core.EnumerationTests.TestCases;
+namespace SomeUtilities.Tests.Core.EnumerationTests.TestCases;
 
-public sealed class GetEnumerationById_SomeEnumeration_Option1 : GetEnumerationById
+public sealed class GetEnumerationById_SomeEnumeration_Option1 : GetEnumerationById, IXunitSerializable
 {
     public GetEnumerationById_SomeEnumeration_Option1() : base(nameof(GetEnumerationById_SomeEnumeration_Option1)) => FunctionsHelper.DoNothing();
 
