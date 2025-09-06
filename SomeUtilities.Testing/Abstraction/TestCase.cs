@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SomeUtilities.Helpers;
 
 namespace SomeUtilities.Testing.Abstraction;
 
-public abstract class TestCase
+public abstract class TestCase(string testMethodName, string testCaseName)
 {
-    protected internal static Dictionary<Type, Dictionary<string, List<TestCase>>> TestCases { get; } = new();
+    protected internal static Dictionary<Type, Dictionary<string, List<TestCase>>> TestCases { get; } = [];
 
-    public string TestMethodName { get; }
+    public string TestMethodName { get; } = testMethodName;
 
-    public string TestCaseName { get; }
-
-    protected TestCase(string testMethodName, string testCaseName)
-    {
-        TestMethodName = testMethodName;
-        TestCaseName = testCaseName;
-
-        FunctionsHelper.DoNothing();
-    }
+    public string TestCaseName { get; } = testCaseName;
 
     public static IEnumerable<TCase> GetTestCases<TClass, TCase>(string testMethodName)
         where TCase : TestCase<TClass>
@@ -56,7 +47,7 @@ public abstract class TestCase<TClass> : TestCase
 
         if (!testCasesForClass.TryGetValue(TestMethodName, out var testCasesForMethod))
         {
-            testCasesForMethod = new();
+            testCasesForMethod = [];
 
             testCasesForClass[TestMethodName] = testCasesForMethod;
         }

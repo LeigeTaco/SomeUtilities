@@ -1,0 +1,13 @@
+{
+  "stryker-config": {
+    "project": "SomeUtilities.csproj",
+    "mutation-level": "complete",
+    "concurrency": 4,
+    "coverage-analysis": "perTestInIsolation",
+    "disable-bail": true,
+    "reporters": [
+      "progress",
+      "html"
+    ]
+  }
+}

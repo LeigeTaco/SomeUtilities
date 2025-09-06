@@ -3,9 +3,9 @@ using SomeUtilities.Helpers;
 using SomeUtilities.Testing.Abstraction;
 using Xunit;
 
-namespace SomeUtilities.Tests.Helpers.FunctionsHelperTests;
+namespace SomeUtilities.Tests.Helpers;
 
-public sealed class Tests : UnitTest
+public sealed class FunctionsHelperTests : UnitTest
 {
     [Fact]
     public void DoNothing_WithoutParams()
