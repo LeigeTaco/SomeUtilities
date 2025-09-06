@@ -33,20 +33,11 @@ public abstract record Enumeration(int Id, string Name)
         return enumeration is not null;
     }
 
-    public static bool TryFindById(int id, Type type, [NotNullWhen(true)] out object? enumeration)
+    public static bool TryFindById(int id, Type type, [NotNullWhen(true)] out Enumeration? enumeration)
     {
         enumeration = SafeGetEnumeration(id, type);
 
         return enumeration is not null;
-    }
-
-    private static Enumeration? SafeGetEnumeration(int id, Type type)
-    {
-        var map = EnumerationMap.Map;
-
-        return map.TryGetValue(type, out var dictionary) && dictionary.TryGetValue(id, out var @enum)
-            ? @enum
-            : null;
     }
 
     public static IEnumerable<TEnumeration> GetAllEnumerations<TEnumeration>()
@@ -56,6 +47,22 @@ public abstract record Enumeration(int Id, string Name)
         var map = EnumerationMap.Map;
 
         return map[type].Select(kvp => kvp.Value as TEnumeration)!;
+    }
+
+    public static IEnumerable<Enumeration> GetAllEnumerations(Type type)
+    {
+        var map = EnumerationMap.Map;
+
+        return map[type].Select(kvp => kvp.Value);
+    }
+
+    private static Enumeration? SafeGetEnumeration(int id, Type type)
+    {
+        var map = EnumerationMap.Map;
+
+        return map.TryGetValue(type, out var dictionary) && dictionary.TryGetValue(id, out var @enum)
+            ? @enum
+            : null;
     }
 
     protected static FrozenDictionary<int, Enumeration> GetMapForType<T>() where T : Enumeration => EnumerationMap.Map[typeof(T)];

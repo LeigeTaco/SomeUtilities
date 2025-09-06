@@ -47,6 +47,26 @@ public sealed class EnumerationTests : UnitTest
         SomeOtherEnumeration4,
     }
 
+    public enum TryFindEnumerationByIdTestCase
+    {
+        SomeEnumeration1,
+        SomeEnumeration2,
+        SomeEnumeration3,
+        SomeEnumeration4,
+        SomeEnumeration_UnknownId,
+        SomeOtherEnumeration1,
+        SomeOtherEnumeration2,
+        SomeOtherEnumeration3,
+        SomeOtherEnumeration4,
+        SomeOtherEnumeration_UnknownId,
+    }
+
+    public enum GetAllEnumerationsTestCase
+    {
+        SomeEnumeration,
+        SomeOtherEnumeration,
+    }
+
     [Theory, MemberData(nameof(GetEnumerationById_WithGeneric_SomeEnumeration_TestData))]
     public void GetEnumerationById_WithGeneric_SomeEnumeration(GetEnumerationByIdTestCase testCase)
     {
@@ -63,7 +83,7 @@ public sealed class EnumerationTests : UnitTest
         actualEnumeration = Enumeration.GetEnumerationById<SomeEnumeration>(givenId);
 
         // ASSERT
-        Assert.Equivalent(expectedEnumeration, actualEnumeration);
+        Assert.Equivalent(expectedEnumeration, actualEnumeration, true);
         Assert.Equal(expectedEnumeration.GetType(), actualEnumeration.GetType());
     }
 
@@ -83,7 +103,7 @@ public sealed class EnumerationTests : UnitTest
         actualEnumeration = Enumeration.GetEnumerationById<SomeOtherEnumeration>(givenId);
 
         // ASSERT
-        Assert.Equivalent(expectedEnumeration, actualEnumeration);
+        Assert.Equivalent(expectedEnumeration, actualEnumeration, true);
         Assert.Equal(expectedEnumeration.GetType(), actualEnumeration.GetType());
     }
 
@@ -133,25 +153,125 @@ public sealed class EnumerationTests : UnitTest
         Assert.IsType<KeyNotFoundException>(actual);
     }
 
-    [Fact]
-    public void TryFindById_WithoutGeneric()
+    [Theory, MemberData(nameof(TryGetEnumerationById_WithGeneric_SomeEnumeration_TestData))]
+    public void TryGetEnumerationById_WithGeneric_SomeEnumeration(TryFindEnumerationByIdTestCase testCase)
     {
         // ARRANGE
-        SomeEnumeration? actualSomeEnumeration, expectedSomeEnumeration = SomeEnumeration.Option1;
-        SomeOtherEnumeration? actualSomeOtherEnumeration, expectedSomeOtherEnumeration = SomeOtherEnumeration.Option1;
+        bool actualResult;
+        SomeEnumeration? actualEnumeration;
 
-        // ACT & ASSERT
-        Assert.False(Enumeration.TryFindById(0, out actualSomeEnumeration));
-        Assert.Null(actualSomeEnumeration);
-        Assert.True(Enumeration.TryFindById(1, out actualSomeEnumeration));
-        Assert.Equal(expectedSomeEnumeration, actualSomeEnumeration);
+        GetTestData(
+            testCase,
+            out var givenId,
+            out _,
+            out var expectedResult,
+            out var expectedEnumeration);
 
-        Assert.False(Enumeration.TryFindById(0, out actualSomeOtherEnumeration));
-        Assert.Null(actualSomeOtherEnumeration);
-        Assert.True(Enumeration.TryFindById(1, out actualSomeOtherEnumeration));
-        Assert.Equal(expectedSomeOtherEnumeration, actualSomeOtherEnumeration);
+        // ACT
+        actualResult = Enumeration.TryFindById(givenId, out actualEnumeration);
 
-        Assert.NotEqual<Enumeration>(actualSomeOtherEnumeration, actualSomeEnumeration);
+        // ASSERT
+        Assert.Equal(expectedResult, actualResult);
+        Assert.Equivalent(expectedEnumeration, actualEnumeration, true);
+    }
+
+    [Theory, MemberData(nameof(TryGetEnumerationById_WithGeneric_SomeOtherEnumeration_TestData))]
+    public void TryGetEnumerationById_WithGeneric_SomeOtherEnumeration(TryFindEnumerationByIdTestCase testCase)
+    {
+        // ARRANGE
+        bool actualResult;
+        SomeOtherEnumeration? actualEnumeration;
+
+        GetTestData(
+            testCase,
+            out var givenId,
+            out _,
+            out var expectedResult,
+            out var expectedEnumeration);
+
+        // ACT
+        actualResult = Enumeration.TryFindById(givenId, out actualEnumeration);
+
+        // ASSERT
+        Assert.Equal(expectedResult, actualResult);
+        Assert.Equivalent(expectedEnumeration, actualEnumeration, true);
+    }
+
+    [Theory, MemberData(nameof(TryGetEnumerationById_WithoutGeneric_TestData))]
+    public void TryFindById_WithoutGeneric(TryFindEnumerationByIdTestCase testCase)
+    {
+        // ARRANGE
+        bool actualResult;
+        Enumeration? actualEnumeration;
+
+        GetTestData(
+            testCase,
+            out var givenId,
+            out var givenType,
+            out var expectedResult,
+            out var expectedEnumeration);
+
+        // ACT
+        actualResult = Enumeration.TryFindById(givenId, givenType, out actualEnumeration);
+
+        // ASSERT
+        Assert.Equal(expectedResult, actualResult);
+        Assert.Equivalent(expectedEnumeration, actualEnumeration, true);
+        Assert.Equal(expectedEnumeration?.GetType(), actualEnumeration?.GetType());
+    }
+
+    [Fact]
+    public void GetAllEnumerations_WithGeneric_SomeEnumeration()
+    {
+        // ARRANGE
+        IEnumerable<SomeEnumeration> actualEnumerations, expectedEnumerations = [
+            SomeEnumeration.Option1,
+            SomeEnumeration.Option2,
+            SomeEnumeration.Option3,
+            SomeEnumeration.Option4,
+        ];
+
+        // ACT
+        actualEnumerations = Enumeration.GetAllEnumerations<SomeEnumeration>();
+
+        // ASSERT
+        Assert.Equivalent(expectedEnumerations, actualEnumerations);
+    }
+
+    [Fact]
+    public void GetAllEnumerations_WithGeneric_SomeOtherEnumeration()
+    {
+        // ARRANGE
+        IEnumerable<SomeOtherEnumeration> actualEnumerations, expectedEnumerations = [
+            SomeOtherEnumeration.Option1,
+            SomeOtherEnumeration.Option2,
+            SomeOtherEnumeration.Option3,
+            SomeOtherEnumeration.Option4,
+        ];
+
+        // ACT
+        actualEnumerations = Enumeration.GetAllEnumerations<SomeOtherEnumeration>();
+
+        // ASSERT
+        Assert.Equivalent(expectedEnumerations, actualEnumerations);
+    }
+
+    [Theory, MemberData(nameof(GetAllEnumerationsTestData))]
+    public void GetAllEnumerations_WithoutGeneric(GetAllEnumerationsTestCase testCase)
+    {
+        // ARRANGE
+        IEnumerable<Enumeration> actualEnumerations;
+
+        GetTestData(
+            testCase,
+            out var givenType,
+            out var expectedEnumerations);
+
+        // ACT
+        actualEnumerations = Enumeration.GetAllEnumerations(givenType);
+
+        // ASSERT
+        Assert.Equivalent(expectedEnumerations, actualEnumerations, true);
     }
 
     public static TheoryData<GetEnumerationByIdTestCase> GetEnumerationById_WithoutGeneric_TestData() => [.. Enum.GetValues<GetEnumerationByIdTestCase>()];
@@ -198,6 +318,54 @@ public sealed class EnumerationTests : UnitTest
         return testCases;
     }
 
+    public static TheoryData<TryFindEnumerationByIdTestCase> TryGetEnumerationById_WithoutGeneric_TestData() => [.. Enum.GetValues<TryFindEnumerationByIdTestCase>()];
+
+    public static TheoryData<TryFindEnumerationByIdTestCase> TryGetEnumerationById_WithGeneric_SomeEnumeration_TestData()
+    {
+        TheoryData<TryFindEnumerationByIdTestCase> testCases = [];
+
+        foreach (var testCase in Enum.GetValues<TryFindEnumerationByIdTestCase>())
+        {
+            GetTestData(
+                testCase,
+                out _,
+                out _,
+                out _,
+                out var enumeration);
+
+            if (enumeration is SomeEnumeration)
+            {
+                testCases.Add(testCase);
+            }
+        }
+
+        return testCases;
+    }
+
+    public static TheoryData<TryFindEnumerationByIdTestCase> TryGetEnumerationById_WithGeneric_SomeOtherEnumeration_TestData()
+    {
+        TheoryData<TryFindEnumerationByIdTestCase> testCases = [];
+
+        foreach (var testCase in Enum.GetValues<TryFindEnumerationByIdTestCase>())
+        {
+            GetTestData(
+                testCase,
+                out _,
+                out _,
+                out _,
+                out var enumeration);
+
+            if (enumeration is SomeOtherEnumeration)
+            {
+                testCases.Add(testCase);
+            }
+        }
+
+        return testCases;
+    }
+
+    public static TheoryData<GetAllEnumerationsTestCase> GetAllEnumerationsTestData() => [.. Enum.GetValues<GetAllEnumerationsTestCase>()];
+
     private static void GetTestData(
         GetEnumerationByIdTestCase testCase,
         out int givenId,
@@ -219,5 +387,112 @@ public sealed class EnumerationTests : UnitTest
 
         givenId = expectedEnumeration.Id;
         givenType = expectedEnumeration.GetType();
+    }
+
+    private static void GetTestData(
+        TryFindEnumerationByIdTestCase testCase,
+        out int givenId,
+        out Type givenType,
+        out bool expectedResult,
+        out Enumeration? expectedEnumeration)
+    {
+        expectedEnumeration = testCase switch
+        {
+            TryFindEnumerationByIdTestCase.SomeEnumeration1 => SomeEnumeration.Option1,
+            TryFindEnumerationByIdTestCase.SomeEnumeration2 => SomeEnumeration.Option2,
+            TryFindEnumerationByIdTestCase.SomeEnumeration3 => SomeEnumeration.Option3,
+            TryFindEnumerationByIdTestCase.SomeEnumeration4 => SomeEnumeration.Option4,
+            TryFindEnumerationByIdTestCase.SomeOtherEnumeration1 => SomeOtherEnumeration.Option1,
+            TryFindEnumerationByIdTestCase.SomeOtherEnumeration2 => SomeOtherEnumeration.Option2,
+            TryFindEnumerationByIdTestCase.SomeOtherEnumeration3 => SomeOtherEnumeration.Option3,
+            TryFindEnumerationByIdTestCase.SomeOtherEnumeration4 => SomeOtherEnumeration.Option4,
+            TryFindEnumerationByIdTestCase.SomeEnumeration_UnknownId or TryFindEnumerationByIdTestCase.SomeOtherEnumeration_UnknownId => null,
+            _ => throw new NotImplementedException(),
+        };
+
+        switch (testCase)
+        {
+            case TryFindEnumerationByIdTestCase.SomeEnumeration1:
+                expectedEnumeration = SomeEnumeration.Option1;
+                givenType = typeof(SomeEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeEnumeration2:
+                expectedEnumeration = SomeEnumeration.Option2;
+                givenType = typeof(SomeEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeEnumeration3:
+                expectedEnumeration = SomeEnumeration.Option3;
+                givenType = typeof(SomeEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeEnumeration4:
+                expectedEnumeration = SomeEnumeration.Option4;
+                givenType = typeof(SomeEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeEnumeration_UnknownId:
+                expectedEnumeration = null;
+                givenType = typeof(SomeEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeOtherEnumeration1:
+                expectedEnumeration = SomeOtherEnumeration.Option1;
+                givenType = typeof(SomeOtherEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeOtherEnumeration2:
+                expectedEnumeration = SomeOtherEnumeration.Option2;
+                givenType = typeof(SomeOtherEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeOtherEnumeration3:
+                expectedEnumeration = SomeOtherEnumeration.Option3;
+                givenType = typeof(SomeOtherEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeOtherEnumeration4:
+                expectedEnumeration = SomeOtherEnumeration.Option4;
+                givenType = typeof(SomeOtherEnumeration);
+                break;
+            case TryFindEnumerationByIdTestCase.SomeOtherEnumeration_UnknownId:
+                expectedEnumeration = null;
+                givenType = typeof(SomeOtherEnumeration);
+                break;
+            default: throw new NotImplementedException();
+        }
+
+        if (expectedEnumeration is not null)
+        {
+            givenId = expectedEnumeration.Id;
+            expectedResult = true;
+        }
+        else
+        {
+            givenId = -1;
+            expectedResult = false;
+        }
+    }
+
+    private static void GetTestData(
+        GetAllEnumerationsTestCase testCase,
+        out Type givenType,
+        out IEnumerable<Enumeration> expectedEnumerations)
+    {
+        switch (testCase)
+        {
+            case GetAllEnumerationsTestCase.SomeEnumeration:
+                givenType = typeof(SomeEnumeration);
+                expectedEnumerations = [
+                    SomeEnumeration.Option1,
+                    SomeEnumeration.Option2,
+                    SomeEnumeration.Option3,
+                    SomeEnumeration.Option4,
+                ];
+                break;
+            case GetAllEnumerationsTestCase.SomeOtherEnumeration:
+                givenType = typeof(SomeOtherEnumeration);
+                expectedEnumerations = [
+                    SomeOtherEnumeration.Option1,
+                    SomeOtherEnumeration.Option2,
+                    SomeOtherEnumeration.Option3,
+                    SomeOtherEnumeration.Option4,
+                ];
+                break;
+            default: throw new NotImplementedException();
+        }
     }
 }
